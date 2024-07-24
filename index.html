@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <button onclick="showSection('home')">Home</button>
+        <button onclick="showSection('find')">Find My Container</button>
+        <button onclick="showSection('register')">Register New Container</button>
+        <button onclick="showSection('delete')">Delete Container</button>
+    </div>
+    <div id="content">
+        <section id="home" class="section active">
+            <h1>Welcome to Container Management</h1>
+        </section>
+        <section id="find" class="section">
+            <h1>Find My Container</h1>
+            <input type="number" id="find-id" placeholder="Enter Container ID">
+            <button onclick="findContainer()">Find</button>
+            <div id="find-result"></div>
+        </section>
+        <section id="register" class="section">
+            <h1>Register New Container</h1>
+            <form id="register-form">
+                <input type="text" id="contains" placeholder="Contains">
+                <input type="number" id="weight" placeholder="Weight">
+                <select id="hazardType">
+                    <option value="1">Explosives</option>
+                    <option value="2">Gasses</option>
+                    <option value="3">Flammable liquids</option>
+                    <option value="4">Flammable solids</option>
+                    <option value="5">Oxidizing substances</option>
+                    <option value="7">Toxic and infectious substances</option>
+                    <option value="8">Radioactive material</option>
+                    <option value="9">Corrosives</option>
+                    <option value="10">Miscellaneous goods</option>
+                </select>
+                <button type="button" onclick="registerContainer()">Register</button>
+            </form>
+        </section>
+        <section id="delete" class="section">
+            <h1>Delete Container</h1>
+            <input type="number" id="delete-id" placeholder="Enter Container ID">
+            <button onclick="deleteContainer()">Delete</button>
+            <div id="delete-result"></div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
