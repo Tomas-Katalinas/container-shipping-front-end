@@ -11,7 +11,8 @@ async function findContainer() {
     const resultDiv = document.getElementById('find-result');
 
     try {
-        const response = await fetch(`http://localhost:8080/api/containers/${id}`);
+        document.getElementById('find-id').value = '';
+        const response = await fetch(`http://localhost:8000/api/containers/${id}`);
         if (response.status === 404) {
             resultDiv.innerHTML = 'Container not found';
         } else {
@@ -20,31 +21,43 @@ async function findContainer() {
                 <p>Contains: <input type="text" id="update-contains" value="${container.contains}"></p>
                 <p>Weight: <input type="number" id="update-weight" value="${container.weight}"></p>
                 <p>Hazard Type: <select id="update-hazardType">
-                    <option value="1" ${container.hazardType && container.hazardType.id === 1 ? 'selected' : ''}>Explosives</option>
-                    <option value="2" ${container.hazardType && container.hazardType.id === 2 ? 'selected' : ''}>Gasses</option>
-                    <option value="3" ${container.hazardType && container.hazardType.id === 3 ? 'selected' : ''}>Flammable liquids</option>
-                    <option value="4" ${container.hazardType && container.hazardType.id === 4 ? 'selected' : ''}>Flammable solids</option>
-                    <option value="5" ${container.hazardType && container.hazardType.id === 5 ? 'selected' : ''}>Oxidizing substances</option>
-                    <option value="7" ${container.hazardType && container.hazardType.id === 7 ? 'selected' : ''}>Toxic and infectious substances</option>
-                    <option value="8" ${container.hazardType && container.hazardType.id === 8 ? 'selected' : ''}>Radioactive material</option>
-                    <option value="9" ${container.hazardType && container.hazardType.id === 9 ? 'selected' : ''}>Corrosives</option>
-                    <option value="10" ${container.hazardType && container.hazardType.id === 10 ? 'selected' : ''}>Miscellaneous goods</option>
+                    ${generateHazardOptions(container.hazardType ? container.hazardType.id : null)}
                 </select></p>
                 <button onclick="updateContainer(${id})">Update</button>
             `;
         }
     } catch (error) {
         console.error('Error fetching container:', error);
+        resultDiv.innerHTML = 'Error fetching container';
     }
+}
+
+function generateHazardOptions(selectedId) {
+    const hazardTypes = [
+        { id: 1, name: 'Explosives' },
+        { id: 2, name: 'Gasses' },
+        { id: 3, name: 'Flammable liquids' },
+        { id: 4, name: 'Flammable solids' },
+        { id: 5, name: 'Oxidizing substances' },
+        { id: 7, name: 'Toxic and infectious substances' },
+        { id: 8, name: 'Radioactive material' },
+        { id: 9, name: 'Corrosives' },
+        { id: 10, name: 'Miscellaneous goods' }
+    ];
+    
+    return hazardTypes.map(type => 
+        `<option value="${type.id}" ${selectedId === type.id ? 'selected' : ''}>${type.name}</option>`
+    ).join('');
 }
 
 async function updateContainer(id) {
     const contains = document.getElementById('update-contains').value;
     const weight = document.getElementById('update-weight').value;
     const hazardTypeId = document.getElementById('update-hazardType').value;
+    const updateResultDiv = document.getElementById('update-result');
 
     try {
-        const response = await fetch(`http://localhost:8080/api/containers/${id}`, {
+        const response = await fetch(`http://localhost:8000/api/containers/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -55,13 +68,22 @@ async function updateContainer(id) {
                 hazardType: { id: hazardTypeId }
             })
         });
+        const result = await response.json();
         if (response.status === 200) {
-            alert('Container updated successfully');
+            updateResultDiv.innerHTML = 'Container updated successfully';
+            updateResultDiv.style.color = 'green';
+            // Clear input fields
+            document.getElementById('update-contains').value = '';
+            document.getElementById('update-weight').value = '';
+            document.getElementById('update-hazardType').value = '';
         } else {
-            alert('Failed to update container');
+            updateResultDiv.innerHTML = `Failed to update container: ${result.message || 'Unknown error'}`;
+            updateResultDiv.style.color = 'black';
         }
     } catch (error) {
         console.error('Error updating container:', error);
+        updateResultDiv.innerHTML = 'Error updating container';
+        updateResultDiv.style.color = 'black';
     }
 }
 
@@ -69,9 +91,10 @@ async function registerContainer() {
     const contains = document.getElementById('contains').value;
     const weight = document.getElementById('weight').value;
     const hazardTypeId = document.getElementById('hazardType').value;
+    const registerResultDiv = document.getElementById('register-result');
 
     try {
-        const response = await fetch('http://localhost:8080/api/containers', {
+        const response = await fetch('http://localhost:8000/api/containers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -82,13 +105,23 @@ async function registerContainer() {
                 hazardType: { id: hazardTypeId }
             })
         });
+
+        const responseData = await response.json();
         if (response.status === 201) {
-            alert('Container registered successfully');
+            registerResultDiv.innerHTML = 'Container registered successfully';
+            registerResultDiv.style.color = 'green';
+            // Clear input fields
+            document.getElementById('contains').value = '';
+            document.getElementById('weight').value = '';
+            document.getElementById('hazardType').value = '';
         } else {
-            alert('Failed to register container');
+            registerResultDiv.innerHTML = `Failed to register container: ${responseData.message || 'Unknown error'}`;
+            registerResultDiv.style.color = 'black';
         }
     } catch (error) {
         console.error('Error registering container:', error);
+        registerResultDiv.innerHTML = 'Error registering container';
+        registerResultDiv.style.color = 'black';
     }
 }
 
@@ -97,15 +130,21 @@ async function deleteContainer() {
     const resultDiv = document.getElementById('delete-result');
 
     try {
-        const response = await fetch(`http://localhost:8080/api/containers/${id}`, {
+        const response = await fetch(`http://localhost:8000/api/containers/${id}`, {
             method: 'DELETE'
         });
         if (response.status === 204) {
             resultDiv.innerHTML = 'Container deleted successfully';
+            resultDiv.style.color = 'green';
+            // Clear input field
+            document.getElementById('delete-id').value = '';
         } else {
             resultDiv.innerHTML = 'Failed to delete container';
+            resultDiv.style.color = 'black';
         }
     } catch (error) {
         console.error('Error deleting container:', error);
+        resultDiv.innerHTML = 'Error deleting container';
+        resultDiv.style.color = 'black';
     }
 }
