@@ -100,6 +100,11 @@ async function updateContainer(id) {
         if (response.status === 200) {
             updateResultDiv.innerHTML = 'Container updated successfully';
             updateResultDiv.style.color = 'green';
+            // Clear input fields
+            document.getElementById('update-contains').value = ''; 
+            document.getElementById('update-weight').value = ''; 
+            document.getElementById('update-hazardType').value = ''; 
+
         } else {
             updateResultDiv.innerHTML = `Failed to update container: ${result.message || 'Unknown error'}`;
             updateResultDiv.style.color = 'black';
@@ -110,6 +115,7 @@ async function updateContainer(id) {
         updateResultDiv.style.color = 'black';
     }
 }
+
 
 // Register a new container
 async function registerContainer() {
@@ -137,7 +143,7 @@ async function registerContainer() {
             },
             body: JSON.stringify(data)
         });
-
+        
         const responseData = await response.json();
         if (response.status === 201) {
             registerResultDiv.innerHTML = 'Container registered successfully';
